@@ -1,5 +1,5 @@
-import {StreamChat} from 'stream-chat';
-import { ENV } from '../config/env.js';
+import { StreamChat } from "stream-chat";
+import { ENV } from "../config/env.js";
 
 const streamClient = StreamChat.getInstance(ENV.STREAM_API_KEY, ENV.STREAM_API_SECRET);
 
@@ -23,11 +23,19 @@ export const deleteStreamUser = async (userId) => {
 };
 
 export const generateStreamToken = (userId) => {
-    try {
-        const userIdString = userId.toString();
-        return streamClient.createToken(userIdString);
-    } catch (error) {
-        console.log("Error generating Stream token:", error);
-        return null;
-    }
-}
+  try {
+    const userIdString = userId.toString();
+    return streamClient.createToken(userIdString);
+  } catch (error) {
+    console.log("Error generating Stream token:", error);
+    return null;
+  }
+};
+
+export const addUserToPublicChannels = async (newUserId) => {
+  const publicChannels = await streamClient.queryChannels({ discoverable: true });
+
+  for (const channel of publicChannels) {
+    await channel.addMembers([newUserId]);
+  }
+};
